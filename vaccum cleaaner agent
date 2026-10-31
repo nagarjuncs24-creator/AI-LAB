@@ -1,0 +1,59 @@
+# 1. Environment: Two rooms (A, B)
+env = {'A': 'Dirty', 'B': 'Dirty'}
+
+# ==========================================
+# Simple Reflex Agent
+# Rule: If dirty -> Suck. If in A -> Right. If in B -> Left.
+# ==========================================
+def simple_reflex_agent(location, status):
+    if status == 'Dirty':
+        return 'Suck'
+    elif location == 'A':
+        return 'Right'
+    elif location == 'B':
+        return 'Left'
+
+# ==========================================
+# Goal-Based Agent
+# Goal: Both rooms are Clean.
+# Uses memory (model) to know when to stop.
+# ==========================================
+memory = {'A': 'Unknown', 'B': 'Unknown'}
+
+def goal_based_agent(location, status):
+    # Update memory
+    memory[location] = status
+    
+    # Check goal: are both clean?
+    if memory['A'] == 'Clean' and memory['B'] == 'Clean':
+        return 'Stop'
+    
+    # Act towards the goal
+    if status == 'Dirty':
+        memory[location] = 'Clean'
+        return 'Suck'
+    elif location == 'A':
+        return 'Right'
+    elif location == 'B':
+        return 'Left'
+
+# ==========================================
+# Run Test
+# ==========================================
+agent_loc = 'A'
+
+print("--- Running Goal-Based Agent ---")
+for step in range(5):
+    status = env[agent_loc]
+    action = goal_based_agent(agent_loc, status)
+    print(f"Step {step+1}: At {agent_loc} ({status}) -> Action: {action}")
+    
+    if action == 'Suck':
+        env[agent_loc] = 'Clean'
+    elif action == 'Right':
+        agent_loc = 'B'
+    elif action == 'Left':
+        agent_loc = 'A'
+    elif action == 'Stop':
+        print("Goal reached! Done.")
+        break
